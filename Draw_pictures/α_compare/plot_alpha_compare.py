@@ -9,9 +9,9 @@ plt.rcParams["font.family"] = "Times New Roman"
 
 BASE_DIR = Path(__file__).resolve().parent
 CSV_PATHS = {
-    "λ=0.6": BASE_DIR / "0.6.csv",
-    "λ=0.8": BASE_DIR / "0.8.csv",
-    "λ=1.0": BASE_DIR / "1.0.csv",
+    "α=0.6": BASE_DIR / "0.6.csv",
+    "α=0.8": BASE_DIR / "0.8.csv",
+    "α=1.0": BASE_DIR / "1.0.csv",
 }
 OUTPUT_PATH = BASE_DIR / "alpha_compare.png"
 
@@ -19,9 +19,9 @@ MAX_EPISODES = 500
 EMA_ALPHA = 0.3
 
 STYLE_MAP = {
-    "λ=0.6": {"color": "#3C5488", "label": "λ=0.6"},  # Nature Dark Blue
-    "λ=0.8": {"color": "#E64B35", "label": "λ=0.8"},  # Nature Red
-    "λ=1.0": {"color": "#00A087", "label": "λ=1.0"},  # Nature Teal
+    "α=0.6": {"color": "#3C5488", "label": "α=0.6"},  # Nature Dark Blue
+    "α=0.8": {"color": "#E64B35", "label": "α=0.8"},  # Nature Red
+    "α=1.0": {"color": "#00A087", "label": "α=1.0"},  # Nature Teal
 }
 
 def reshape_initial_dip(arr: np.ndarray, start_val: float, seed: int) -> np.ndarray:
@@ -91,10 +91,10 @@ def adaptive_ema_smooth(y: np.ndarray, base_alpha: float = 0.2,
     n = len(y)
     result = np.empty(n)
 
-    # λ=0.6: 前 100 集使用更小 alpha 抑制波动，但保持趋势形状
+    # α=0.6: 前 100 集使用更小 alpha 抑制波动，但保持趋势形状
     early_alpha = base_alpha
     early_alpha_end = min(stabilize_start, n)
-    if curve_label == "λ=0.6" and n > 0:
+    if curve_label == "α=0.6" and n > 0:
         early_alpha_end = min(100, n)
         # 0-100: alpha 从 0.20 平滑过渡到 0.04（更强平滑，30-80区间波动大幅减小）
         early_decay = np.linspace(0.20, 0.04, early_alpha_end)
@@ -151,8 +151,8 @@ def read_and_scale_data() -> dict[str, np.ndarray]:
     target_min, target_max = -3226.0, -726.0
 
     scaled_data = {}
-    starts = {"λ=0.6": -2626, "λ=0.8": -2556, "λ=1.0": -2486}
-    seeds = {"λ=0.6": 38, "λ=0.8": 204, "λ=1.0": 951}
+    starts = {"α=0.6": -2626, "α=0.8": -2556, "α=1.0": -2486}
+    seeds = {"α=0.6": 38, "α=0.8": 204, "α=1.0": 951}
 
     for label, arr in raw_data.items():
         # Global uniform scaling preserves later authentic relative features
@@ -180,7 +180,7 @@ def plot_alpha_comparison() -> None:
         spine.set_linewidth(0.8)
 
     # Plot each line
-    order = ["λ=0.6", "λ=0.8", "λ=1.0"]
+    order = ["α=0.6", "α=0.8", "α=1.0"]
     for col in order:
         if col not in data:
             continue
@@ -189,8 +189,8 @@ def plot_alpha_comparison() -> None:
         n_ep = len(y)
         x = np.arange(n_ep)
 
-        # λ=0.6: 前 100 集对原始数据做平滑，缩小波动但保留大趋势
-        if col == "λ=0.6" and n_ep > 100:
+        # α=0.6: 前 100 集对原始数据做平滑，缩小波动但保留大趋势
+        if col == "α=0.6" and n_ep > 100:
             smooth_end = 100
             # 用 5 集窗口的 rolling mean 做平滑（更窄窗口保留趋势）
             smoothed = pd.Series(y).rolling(5, min_periods=1, center=True).mean().values
@@ -202,8 +202,8 @@ def plot_alpha_comparison() -> None:
             # 应用：y = blend * y + (1 - blend) * smoothed
             y[:smooth_end] = blend * y[:smooth_end] + (1 - blend) * smoothed[:smooth_end]
 
-        # λ=0.6: 前 20 从 -2750 自然过渡到 +200，40-100 加 200，100 之后不动
-        if col == "λ=0.6" and n_ep > 0:
+        # α=0.6: 前 20 从 -2750 自然过渡到 +200，40-100 加 200，100 之后不动
+        if col == "α=0.6" and n_ep > 0:
             shift = np.zeros(n_ep)
             # 用 cosine 曲线从起点自然过渡到 +200（ep0→ep40）
             target_start = -2750.0
@@ -221,10 +221,10 @@ def plot_alpha_comparison() -> None:
                 shift[100:fade_end] = np.linspace(200.0, 0.0, fade_end - 100)
             y = y + shift
 
-        # 修复 λ=1.0 在 260-330 区间的大幅掉落：用 EMA 稳定期均值作为
+        # 修复 α=1.0 在 260-330 区间的大幅掉落：用 EMA 稳定期均值作为
         # 目标基线，把过度下跌的部分拉回到更平稳的水平。
         # 必须在 EMA 计算之前修正 y，否则平滑线和背景会分离。
-        if col == "λ=1.0" and n_ep > 200:
+        if col == "α=1.0" and n_ep > 200:
             pre_ema = np.empty(n_ep)
             pre_ema[0] = y[0]
             for i in range(1, n_ep):
@@ -270,8 +270,8 @@ def plot_alpha_comparison() -> None:
             taper = np.linspace(1.0, 0.45, n_ep - stabilise_ep)
             noise_env[stabilise_ep:] = taper
 
-        # λ=0.6: 前 100 集进一步缩小噪声幅度，前 20 几乎无噪声
-        if col == "λ=0.6" and n_ep > 0:
+        # α=0.6: 前 100 集进一步缩小噪声幅度，前 20 几乎无噪声
+        if col == "α=0.6" and n_ep > 0:
             early_taper_end = min(100, n_ep)
             early_taper = np.linspace(0.05, 0.5, early_taper_end)
             noise_env[:early_taper_end] = early_taper
