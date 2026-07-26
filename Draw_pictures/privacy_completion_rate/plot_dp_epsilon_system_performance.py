@@ -29,7 +29,7 @@ def main():
         x,
         average_delay,
         marker="o",
-        markersize=8,
+        markersize=6,
         linewidth=2.0,
         linestyle="-",
         label="Average delay",
@@ -40,7 +40,7 @@ def main():
         x,
         completion_rate,
         marker="s",
-        markersize=8,
+        markersize=6,
         linewidth=2.0,
         linestyle="--",
         label="Completion rate",
@@ -51,8 +51,8 @@ def main():
     ax_delay.set_xticks(x)
     ax_delay.set_xticklabels(epsilon_labels)
     ax_delay.set_xlabel(r"Privacy budget $\epsilon$", fontsize=14)
-    ax_delay.set_ylabel("Average delay (s)", fontsize=14)
-    ax_completion.set_ylabel("Task completion rate (%)", fontsize=14)
+    ax_delay.set_ylabel("Average Delay (s)", fontsize=14)
+    ax_completion.set_ylabel("Task Completion Rate (%)", fontsize=14)
 
     ax_delay.tick_params(axis="both", direction="out", length=4, width=0.8, labelsize=14)
     ax_completion.tick_params(axis="y", direction="out", length=4, width=0.8, labelsize=14)
@@ -60,18 +60,19 @@ def main():
 
     leg = ax_delay.legend(
         [delay_line, completion_line],
-        ["Average delay", "Completion rate"],
+        ["Average Delay", "Completion Rate"],
         loc="upper right",
         bbox_to_anchor=(1.0, 0.65),
         fontsize=12,
         framealpha=1.0,
         edgecolor="#cccccc",
         fancybox=True,
+        borderpad=0.8,
     )
     leg.get_frame().set_linewidth(1.0)
 
     plt.tight_layout()
-    plt.savefig(OUTPUT_PATH, dpi=300)
+    plt.savefig(OUTPUT_PATH, dpi=600)
     print(f"Done. Saved figure to {OUTPUT_PATH}")
 
 

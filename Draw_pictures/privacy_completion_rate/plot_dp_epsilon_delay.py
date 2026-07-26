@@ -25,7 +25,7 @@ def main():
         x,
         average_delay,
         marker="o",
-        markersize=8,
+        markersize=6,
         linewidth=2.0,
         label="FMAPPO-DP",
         color="#4d4d9f",
@@ -35,7 +35,7 @@ def main():
     ax.set_xticks(x)
     ax.set_xticklabels(epsilon_labels)
     ax.set_xlabel(r"Privacy budget $\epsilon$", fontsize=14)
-    ax.set_ylabel("Average delay (s)", fontsize=14)
+    ax.set_ylabel("Average Delay (s)", fontsize=14)
 
     ax.tick_params(axis="both", direction="out", length=4, width=0.8, labelsize=14)
     ax.grid(True, linestyle="--", color="#bbbbbb", linewidth=0.6, zorder=0)
@@ -45,6 +45,7 @@ def main():
         framealpha=1.0,
         edgecolor="#cccccc",
         fancybox=True,
+        borderpad=0.8,
     )
     leg.get_frame().set_linewidth(1.0)
 

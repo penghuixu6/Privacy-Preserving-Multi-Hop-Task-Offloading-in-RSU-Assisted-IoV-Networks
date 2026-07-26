@@ -279,7 +279,7 @@ def plot_alpha_comparison() -> None:
         noisy_background = y + clipped_noise * noise_env
 
         # Plot
-        ax.plot(x, noisy_background, color=color, alpha=0.2, linewidth=1.2, zorder=2)
+        ax.plot(x, noisy_background, color=color, alpha=0.2, linewidth=2.0, zorder=2)
         ax.plot(x, ema_vals, color=color, linewidth=2.0, label=label, zorder=3)
 
     # Limits and ticks
@@ -291,7 +291,7 @@ def plot_alpha_comparison() -> None:
     ax.tick_params(axis="both", direction="out", length=4, width=0.8, labelsize=14)
 
     # Grid (both axes, dashed, gray)
-    ax.grid(True, linestyle="--", color="#bbbbbb", linewidth=0.6, zorder=-1)
+    ax.grid(True, linestyle="--", color="#bbbbbb", linewidth=0.6, zorder=0)
     
     # Labels
     ax.set_xlabel("Episodes", fontsize=14)
@@ -300,7 +300,7 @@ def plot_alpha_comparison() -> None:
     # Legend
     leg = ax.legend(
         loc="lower right",
-        fontsize=14,
+        fontsize=12,
         framealpha=1.0,
         edgecolor="#cccccc",
         fancybox=True,
