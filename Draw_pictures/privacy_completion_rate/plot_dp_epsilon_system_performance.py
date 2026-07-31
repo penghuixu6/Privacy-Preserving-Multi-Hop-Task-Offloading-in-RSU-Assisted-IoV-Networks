@@ -6,7 +6,7 @@ import numpy as np
 plt.rcParams["font.family"] = "Times New Roman"
 
 SCRIPT_DIR = Path(__file__).resolve().parent
-OUTPUT_PATH = SCRIPT_DIR / "dp_epsilon_system_performance.png"
+OUTPUT_PATH = SCRIPT_DIR / "dp_epsilon_system_performance.eps"
 
 
 def main():

@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 plt.rcParams["font.family"] = "Times New Roman"
 
 SCRIPT_DIR = Path(__file__).resolve().parent
-OUTPUT_PATH = SCRIPT_DIR / "vehicles_delay.png"
+OUTPUT_PATH = SCRIPT_DIR / "vehicles_delay.eps"
 
 def main():
     # 数据设置

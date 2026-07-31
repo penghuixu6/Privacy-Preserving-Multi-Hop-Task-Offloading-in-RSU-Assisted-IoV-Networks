@@ -4,6 +4,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from matplotlib.colors import to_rgb
 
 plt.rcParams["font.family"] = "Times New Roman"
 
@@ -13,7 +14,7 @@ CSV_PATHS = {
     "α=0.8": BASE_DIR / "0.8.csv",
     "α=1.0": BASE_DIR / "1.0.csv",
 }
-OUTPUT_PATH = BASE_DIR / "alpha_compare.png"
+OUTPUT_PATH = BASE_DIR / "alpha_compare.eps"
 
 MAX_EPISODES = 500
 EMA_ALPHA = 0.3
@@ -278,8 +279,10 @@ def plot_alpha_comparison() -> None:
 
         noisy_background = y + clipped_noise * noise_env
 
-        # Plot
-        ax.plot(x, noisy_background, color=color, alpha=0.2, linewidth=2.0, zorder=2)
+        # EPS 不支持透明度，因此预先将底层线颜色与白色混合。
+        rgb = np.array(to_rgb(color))
+        background_color = tuple(0.2 * rgb + 0.8 * np.ones(3))
+        ax.plot(x, noisy_background, color=background_color, linewidth=2.0, zorder=2)
         ax.plot(x, ema_vals, color=color, linewidth=2.0, label=label, zorder=3)
 
     # Limits and ticks

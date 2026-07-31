@@ -2,12 +2,13 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from matplotlib.colors import to_rgb
 
 plt.rcParams["font.family"] = "Times New Roman"
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 DATA_PATH = SCRIPT_DIR / "reward.csv"
-OUTPUT_PATH = SCRIPT_DIR / "reward.png"
+OUTPUT_PATH = SCRIPT_DIR / "reward.eps"
 
 # EMA smoothing alpha
 EMA_ALPHA = 0.5
@@ -111,9 +112,12 @@ def main():
         clipped_noise = np.clip(raw_noise, -1.8 * noise_scale, 1.8 * noise_scale)
         noisy_background = y + clipped_noise
 
-        # 3) Background noisy raw data and Thick smooth line
-        ax.plot(x, noisy_background, color=color, alpha=0.25, linewidth=2.0, zorder=2)
-        ax.plot(x, ema.to_numpy(), color=color, linewidth=2, label=label, zorder=3)
+        # EPS 不支持透明度，因此预先将底层线颜色与白色混合，
+        # 得到与 alpha=0.25 接近的浅色效果。
+        rgb = np.array(to_rgb(color))
+        background_color = tuple(0.25 * rgb + 0.75 * np.ones(3))
+        ax.plot(x, noisy_background, color=background_color, linewidth=1.2, zorder=2)
+        ax.plot(x, ema.to_numpy(), color=color, linewidth=1.8, label=label, zorder=3)
 
     # Limits and ticks
     # Looking at the image, we extend x to 500
@@ -125,7 +129,7 @@ def main():
     ax.tick_params(axis="both", direction="out", length=4, width=0.8, labelsize=14)
 
     # Grid (both axes, dashed, gray)
-    ax.grid(True, linestyle="--", color="#bbbbbb", linewidth=0.6, zorder=0)
+    ax.grid(True, linestyle="--", color="#bbbbbb", linewidth=0.6, zorder=-1)
     
     # Labels
     ax.set_xlabel("Episodes", fontsize=14)
@@ -147,7 +151,7 @@ def main():
         framealpha=1.0,
         edgecolor="#cccccc",
         fancybox=True,
-        borderpad=0.8,
+        borderpad=0.6
     )
     leg.get_frame().set_linewidth(1.0)
 
